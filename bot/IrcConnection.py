@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
-# @Author: teemu
-# @Date:   2016-05-22 11:14:58
-# @Last Modified by:   teemu
-# @Last Modified time: 2016-06-12 14:19:55
 
 import irc.client
 
 from bot.AbstractConnection import *
+from bot.Configurations import Configurations
 
 
 class IrcConnection(AbstractConnection):
@@ -18,6 +15,14 @@ class IrcConnection(AbstractConnection):
             methodname = "_on_" + operation
             method = getattr(self, methodname)
             self.client.connection.add_global_handler(operation, method)
+
+    def load_configurations(self):
+        confs = Configurations()
+        self.nick = confs.get("irc", "nick")
+
+    def start(self):
+        self._connect()
+        self.client.start()
 
     def _connect(self):
         print("connecting...")
@@ -50,9 +55,8 @@ class IrcConnection(AbstractConnection):
     def _on_join(self, conn, event):
         return
 
-    def start(self):
-        self._connect()
-        self.client.start()
+    def _on_configurations_changed(self):
+        pass
 
 if __name__ == '__main__':
     connection = IrcConnection()
