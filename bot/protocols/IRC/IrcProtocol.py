@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import asyncio
-from irc.client import ServerConnectionError 
 from irc.client import always_iterable, features, is_channel, ctcp
 from .IrcParser import IrcParser
 

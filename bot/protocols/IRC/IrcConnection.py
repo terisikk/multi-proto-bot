@@ -1,6 +1,6 @@
 import asyncio
 from .IrcProtocol import IrcProtocol, IrcUser
-from .AbstractConnection import AbstractConnection
+from bot.AbstractConnection import AbstractConnection
 
 
 class IrcConnection(AbstractConnection):
