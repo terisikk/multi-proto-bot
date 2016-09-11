@@ -27,6 +27,6 @@ class TestIrcMessage(unittest.TestCase):
         self.assertEqual(message.to_outgoing_message(), "KICK rotta #rotankolo :Ei juustoa rotalle")
 
     def test_handles_colon_separated_arguments(self):
-        message = IrcMessage("JOIN", [", ".join(["#rotankolo", "#rommiluola", "#lol.oulu"])])
-        self.assertEqual(message.to_outgoing_message(), "JOIN #rotankolo, #rommiluola, #lol.oulu")
+        message = IrcMessage("JOIN", [",".join(["#rotankolo", "#rommiluola", "#lol.oulu"])])
+        self.assertEqual(message.to_outgoing_message(), "JOIN #rotankolo,#rommiluola,#lol.oulu")
 
