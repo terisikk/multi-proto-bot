@@ -1,12 +1,12 @@
 import unittest
-from bot.AbstractConnection import AbstractConnection
+from bot.AbstractClient import AbstractClient
 
 
-class AbstractConnectionTestCase(unittest.TestCase):
+class AbstractClientTestCase(unittest.TestCase):
     connection = None
 
     def setUp(self):
-        self.connection = AbstractConnection()
+        self.connection = AbstractClient()
 
     def tearDown(self):
         pass

@@ -1,11 +1,11 @@
 import asyncio
-from bot.AbstractConnection import AbstractConnection
+from bot.AbstractClient import AbstractClient
 from .MumbleProtocol import MumbleProtocol
 
 
-class MumbleConnection(AbstractConnection):
+class MumbleClient(AbstractClient):
     def __init__(self, nickname, password):
-        super(MumbleConnection, self).__init__()
+        super(MumbleClient, self).__init__()
         self.protocol = MumbleProtocol(nickname, password)
 
     def public_message(self, target, message):

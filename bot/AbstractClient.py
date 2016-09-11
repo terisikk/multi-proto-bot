@@ -2,15 +2,16 @@
 import asyncio
 
 
-class AbstractConnection(object):
-    connection = None
-    servers = []
-    channels = []
-    protocol = None
-    loop = None
-
+class AbstractClient(object):
     def __init__(self):
         self._nick = ""
+        self.connection = None
+        self.servers = []
+        self.channels = []
+        self.protocol = None
+        self.loop = None
+        self.listeners = []
+        self.register_event_listener(self)
 
     def join_channel(self, name, password=""):
         raise NotImplementedError("join_channel not implemented")
@@ -24,14 +25,15 @@ class AbstractConnection(object):
     def list_users_on_channel(self, channel):
         raise NotImplementedError("list_users not implemented")
 
-    @property
-    def nick(self):
-        return self._nick
+    def register_event_listener(self, listener):
+        if listener not in self.listeners:
+            self.listeners.append(listener)
 
-    @nick.setter
-    def nick(self, nickname):
-        self._nick = nickname
+    def on_protocol_event(self, event):
+        for listener in self.listeners:
+            handler = getattr(listener, "on_" + event.name, None)
+            if handler:
+                handler(event)
 
     def start(self, server, port):
         self.loop = asyncio.get_event_loop()
-        coro = self.loop.create_connection(self.protocol, server, port)

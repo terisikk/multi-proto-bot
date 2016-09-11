@@ -1,27 +1,21 @@
 # -*- coding: utf-8 -*-
 
+from irc.client import always_iterable, ctcp, features, is_channel
+
 import asyncio
-from irc.client import always_iterable, features, is_channel, ctcp
-from .IrcParser import IrcParser
+from bot.ChatProtocol import ChatProtocol
+
+import bot.protocols.IRC.IrcParser as IrcParser
 
 
-class IrcUser(object):
-    def __init__(self, nickname, username=None, ircname=None):
-        self.nickname = nickname
-        self.username = username or nickname
-        self.ircname = ircname or nickname
-        self.real_nickname = nickname
-
-
-class IrcProtocol(asyncio.Protocol):
-    def __init__(self, ircuser, password=None):
+class IrcProtocol(ChatProtocol):
+    def __init__(self, password=None):
+        super(IrcProtocol, self).__init__()
         self.connected = False
         self.real_server_name = ""
-        self.ircuser = ircuser
         self.password = password
         self.features = features.FeatureSet()
         self.transport = None
-        self.parser = IrcParser()
 
     def connection_made(self, transport):
         self.connected = True
@@ -31,8 +25,9 @@ class IrcProtocol(asyncio.Protocol):
         if self.password:
             self.log_on()
 
-        self.nick(self.ircuser.nickname)
-        self.user(self.ircuser.username, self.ircuser.ircname)
+        for listener in self.listeners:
+            listener.on_connection_made(None)
+
         return self
 
     def log_on(self):
@@ -45,36 +40,11 @@ class IrcProtocol(asyncio.Protocol):
         return self.real_server_name or ""
 
     def data_received(self, data):
-        # UNICODE :D JA ISO-8859-15 :D
-        line = data.decode()
-        print("FROM SERVER: {}".format(line))
-        self._process_line(line)
-
-
-    def _process_line(self, line):
-        command = self.parser.unpack_data(line)
-
-        if command.source and not self.real_server_name:
-            self.real_server_name = command.source
-
-        if command.command == "nick":
-            if command.source.nick == self.ircuser.real_nickname:
-                self.ircuser.real_nickname = command.arguments[0]
-        elif command.command == "welcome":
-            # Record the nickname in case the client changed nick
-            # in a nicknameinuse callback.
-            self.ircuser.real_nickname = command.arguments[0]
-            self.privmsg("Janiskeisari", "spruit spart")
-            self.join("#smurkkanat")
-        elif command.command == "featurelist":
-            self.features.load(command.arguments)
-
-        handler = (
-            self._handle_message
-            if command in ["privmsg", "notice"]
-            else self._handle_other
-        )
-        handler(command.arguments, command.command, command.source, command.tags)
+        #print("FROM SERVER: {}".format(line))
+        event = IrcParser.unpack_data(data)
+        print(event.command, event.source, event.arguments)
+        setattr(event, "name", event.command.lower())
+        self.notify_listeners(event)
 
     def _handle_message(self, arguments, command, source, tags):
         target, msg = arguments[:2]
@@ -184,7 +154,7 @@ class IrcProtocol(asyncio.Protocol):
         if not self.connected:
             return
 
-        self.connected = 0
+        self.connected = False
 
         self.quit(msg)
 
@@ -263,21 +233,9 @@ class IrcProtocol(asyncio.Protocol):
         self.send("QUIT", sentence=reason)
 
     def send(self, command, arguments=None, tags=None, sentence=None):
-        message = self.parser.pack_data(command, arguments, tags, sentence)
+        print("TO SERVER: ", command, arguments, tags, sentence)
+        message = IrcParser.pack_data(command, arguments, tags, sentence)
         self.send_raw(message)
-
-    def send_raw(self, message):
-        self._check_transport_status()
-
-        try:
-            self.transport.write(message)
-            print("TO SERVER: " + str(message))
-        except asyncio.TimeoutError:
-            self.transport.close()
-
-    def _check_transport_status(self):
-        if self.transport is None:
-            raise asyncio.InvalidStateError("Not connected.")
 
     def squit(self, server, comment=None):
         self.send("SQUIT " , [server], sentence=comment)
@@ -322,9 +280,3 @@ class IrcProtocol(asyncio.Protocol):
         self.send("WHOWAS", [nick, maximum, server])
 
 loop = asyncio.get_event_loop()
-
-if __name__ == '__main__':
-    coro = loop.create_connection(lambda: IrcProtocol(IrcUser("JanisBot4")), "open.ircnet.net", 6667)
-    loop.run_until_complete(coro)
-    loop.run_forever()
-    loop.close()

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from ..IrcParser import IrcMessage
+from ..IrcMessage import IrcMessage
 
 
 class TestIrcMessage(unittest.TestCase):
@@ -29,3 +29,4 @@ class TestIrcMessage(unittest.TestCase):
     def test_handles_colon_separated_arguments(self):
         message = IrcMessage("JOIN", [", ".join(["#rotankolo", "#rommiluola", "#lol.oulu"])])
         self.assertEqual(message.to_outgoing_message(), "JOIN #rotankolo, #rommiluola, #lol.oulu")
+

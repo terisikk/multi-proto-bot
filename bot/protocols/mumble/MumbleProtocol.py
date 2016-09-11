@@ -1,7 +1,9 @@
 import asyncio
 import ssl
+
+from bot.ChatProtocol import ChatProtocol
 import bot.protocols.mumble.Mumble_pb2 as mumble_protobuf
-from bot.protocols.mumble.MumbleParser import MumbleParser, PACKET_NUMBERS
+from .MumbleParser import MumbleParser, PACKET_NUMBERS
 
 
 MUMBLE_VERSION = 66052  # 1.2.4
@@ -19,10 +21,11 @@ class UDPTunnelTransport(asyncio.DatagramTransport):
             PACKET_NUMBERS[mumble_protobuf.UDPTunnel], data)
 
 
-class MumbleProtocol(asyncio.Protocol):
+class MumbleProtocol(ChatProtocol):
     """Implements mumble's protocol for communicating with a murmur server.
     http://mumble.sourceforge.net/Protocol"""
     def __init__(self, username, password):
+        super(MumbleProtocol, self).__init__()
         self.username = username
         self.password = password
         self._ping_handler = None
@@ -46,17 +49,8 @@ class MumbleProtocol(asyncio.Protocol):
         print(message)
 
     def send(self, protobuf_message):
-        self._check_transport_status()
         packet = self.parser.pack_data(protobuf_message)
-
-        try:
-            self.transport.write(packet)
-        except asyncio.TimeoutError:
-            self.transport.close()
-
-    def _check_transport_status(self):
-        if self.transport is None:
-            raise asyncio.InvalidStateError("Not connected.")
+        self.send_raw(packet)
 
     def send_version(self):
         client_version = mumble_protobuf.Version()
