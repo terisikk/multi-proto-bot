@@ -1,63 +1,11 @@
-from irc.client import NickMask, events, _rfc_1459_command_regexp, message
+from .message import IrcMessage
 from irc.client import always_iterable
 
-class IrcMessage(object):
-    def __init__(self, command, arguments=None, tags=None, sentence=None):
-        self.source = None
-        self.command = command
-        self.arguments = arguments 
-        self.tags = tags
-        self.sentence = sentence
 
-    def to_outgoing_message(self):
-        msg = self.command
-        msg += self._add_fields(self.arguments)
-        msg += self._add_fields(self.tags)
-        msg += self._add_sentence()
-        return msg
-
-    def _add_fields(self, fields):
-        fieldstring = ""
-        if fields is not None:
-            for field in fields:
-                fieldstring += self._add_field(field)
-
-            return fieldstring
-        return ""
-
-    def _add_field(self, field):
-        if field is not None:
-            return " " + field.strip()
-        return ""
-
-    def _add_sentence(self):
-        if self.sentence is not None:
-            return " :" + self.sentence
-        return ""
-
-    @staticmethod
-    def _command_from_group(group):
-        command = group.lower()
-        # Translate numerics into more readable strings.
-        return events.numeric.get(command, command)
-
-    @staticmethod
-    def from_server_message(line):
-        match = _rfc_1459_command_regexp.match(line)
-        if match is None:
-            return None
-
-        grp = match.group
-
-        source = NickMask.from_group(grp("prefix"))
-        command = IrcMessage._command_from_group(grp("command"))
-        arguments = message.Arguments.from_group(grp('argument'))
-        tags = message.Tag.from_group(grp('tags'))
-        
-        msg = IrcMessage(command, arguments, tags)
-        msg.source = source
-        return msg
-
+class Admin(IrcMessage):
+    def __init__(self, server=""):
+        super().__init__("ADMIN", [server])
+        self.server = server
 
 class Away(IrcMessage):
     def __init__(self, text=""):
@@ -256,3 +204,61 @@ class Whowas(IrcMessage):
         super().__init__("WHOWAS", [self.nicks, maximum, server])
         self.maximum = maximum
         self.server = server
+
+class Ctcp(IrcMessage):
+    def __init__(self, ctcptype, target, parameter=""):
+        self.target = target
+        self.ctcptype = ctcptype.upper()
+        self.parameter = parameter
+
+        if parameter:
+            self.message = "\001" + self.ctcptype + " " + self.parameter + "\001"
+        else:
+            self.message = "\001" + self.ctcptype + "\001"
+
+        super().__init__("PRIVMSG", [self.target, self.message])
+
+class Ctcpreply(IrcMessage):
+    def __init__(self, target, parameter):
+        self.target = target
+        self.parameter = parameter
+        super().__init__("NOTICE", [target, "\001{}\001".format(parameter)])
+
+class Action(Ctcp):
+    def __init__(self, target, action):
+        super().__init__("ACTION", target, action)
+
+class Cap(IrcMessage):
+    def __init__(self, subcommand, *args):
+        """
+        Send a CAP command according to `the spec
+        <http://ircv3.atheme.org/specification/capability-negotiation-3.1>`_.
+
+        Arguments:
+            subcommand -- LS, LIST, REQ, ACK, CLEAR, END
+            args -- capabilities, if required for given subcommand
+        """
+        cap_subcommands = set(["LS", "LIST", "REQ", "ACK", "NAK", "CLEAR", "END"])
+        client_subcommands = set(cap_subcommands) - set('NAK')
+        assert subcommand in client_subcommands, "invalid subcommand"
+
+        super().__init__("CAP", [subcommand])
+
+        self._handle_multi_parameter(args)
+        
+    def _handle_multi_parameter(self, args):
+        """
+        According to the spec::
+
+            If more than one capability is named, the RFC1459 designated
+            sentinel (:) for a multi-parameter argument must be present.
+
+        It's not obvious where the sentinel should be present or if it
+        must be omitted for a single parameter, so follow convention and
+        only include the sentinel prefixed to the first parameter if more
+        than one parameter is present.
+        """
+        if len(args) > 1:
+            self.sentence = " ".join(args)
+        else:
+            self.arguments.extend(args)

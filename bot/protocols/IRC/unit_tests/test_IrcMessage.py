@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from ..IrcMessage import IrcMessage
+from ..message import IrcMessage
 
 
 class TestIrcMessage(unittest.TestCase):

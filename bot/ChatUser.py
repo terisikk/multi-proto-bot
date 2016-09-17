@@ -1,6 +1,6 @@
 
 def new_user(name):
-    return {"name": name}
+    return {"username": name}
 
 def new_ircuser(nickname, username=None, ircname=None):
     user = new_user(username or nickname)

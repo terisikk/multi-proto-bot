@@ -1,16 +1,16 @@
 import re
 from irc.client import MessageTooLong
-from .IrcMessage import IrcMessage 
+from . import message 
 
 
-def pack_data(command, arguments=None, tags=None, sentence=None):
-    msg = IrcMessage(command, arguments, tags, sentence).to_outgoing_message()
+def pack_data(command):
+    msg = command.to_outgoing_message()
     return _prepare_message(msg)
 
 def unpack_data(data):
     # UNICODE :D JA ISO-8859-15 :D
-    data = data.decode("ISO-8859-15")
-    return IrcMessage.from_server_message(data)        
+    #data = data.decode("ISO-8859-15")
+    return message.IrcMessage.from_server_message(data)        
 
 def _prepare_message(msg):
     msg = _remove_line_endings(msg)

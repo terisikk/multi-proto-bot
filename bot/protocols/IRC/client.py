@@ -2,7 +2,8 @@ import asyncio
 from bot.AbstractClient import AbstractClient
 import bot.ChatUser as ChatUser
 
-from .IrcProtocol import IrcProtocol
+from .protocol import IrcProtocol
+from . import message as IrcMessage
 
 
 class IrcClient(AbstractClient):
@@ -12,21 +13,29 @@ class IrcClient(AbstractClient):
         self.protocol = IrcProtocol()
         self.protocol.register_event_listener(self)
 
-    def join_channel(self, name, password=""):
-        self.protocol.join(name, password)
+    def join_channel(self, channel_name, password=""):
+        command = IrcMessage.Join(channel_name, password)
+        self.protocol.send(command)
 
     def public_message(self, target, message):
-        self.protocol.privmsg(target, message)
+        command = IrcMessage.Privmsg(target, message)
+        self.protocol.send(command)
 
     def private_message(self, target, message):
-        self.protocol.privmsg(target, message)
+        command = IrcMessage.Privmsg(target, message)
+        self.protocol.send(command)
 
     def list_users_on_channel(self, channel):
-        self.protocol.names([channel])
+        command = IrcMessage.Names([channel])
+        self.protocol.send(command)
 
     def set_nickname(self, nickname):
-        self.protocol.nick(nickname)
-        self._nick = self.irc_user.get("nickname", self._nick)
+        command = IrcMessage.Nick(nickname)
+        self.protocol.send(command)
+
+    def log_on(self, password):
+        command = IrcMessage.Pass(password)
+        self.protocol.send(command)
 
     def on_welcome(self, event):
         self.private_message("Janiskeisari", "SPRIIT SPRAT")
@@ -38,8 +47,13 @@ class IrcClient(AbstractClient):
         pass
 
     def on_connection_made(self, event):
-        self.protocol.nick(self.irc_user.get("nickname"))
-        self.protocol.user(self.irc_user.get("username"), self.irc_user.get("ircname"))
+        password = self.irc_user.get("password", None)
+        if password:
+            self.log_on(password)
+
+        self.set_nickname(self.irc_user.get("nickname"))
+        command = IrcMessage.User(self.irc_user.get("username"), self.irc_user.get("ircname"))
+        self.protocol.send(command)
 
     def on_nicknameinuse(self, event):
         print(event)
@@ -48,13 +62,14 @@ class IrcClient(AbstractClient):
         self.protocol.features.load(event.arguments)
 
     def on_ping(self, event):
-        self.protocol.pong(event.source)
+        command = IrcMessage.Pong(event.arguments[0])
+        self.protocol.send(command)
 
     def on_namreply(self, event):
         print(event)
 
-    def on_privmsg(self, event):
-        print(event)
+    def on_topic(self, event):
+        print("ON TOPIC: ", event.channel, event.topic)
 
 
 if __name__ == '__main__':
