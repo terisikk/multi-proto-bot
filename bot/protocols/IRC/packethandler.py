@@ -1,6 +1,6 @@
 import re
 from irc.client import MessageTooLong
-from . import message 
+from . import commands 
 
 
 def pack_data(command):
@@ -10,7 +10,7 @@ def pack_data(command):
 def unpack_data(data):
     # UNICODE :D JA ISO-8859-15 :D
     #data = data.decode("ISO-8859-15")
-    return message.IrcMessage.from_server_message(data)        
+    return commands.from_server_message(data)        
 
 def _prepare_message(msg):
     msg = _remove_line_endings(msg)
@@ -27,5 +27,6 @@ def _raise_error_if_message_too_long(sendbytes):
     # According to the RFC http://tools.ietf.org/html/rfc2812#page-6,
     # clients should not transmit more than 512 bytes.
     if len(sendbytes) > 512:
+        # TODO: another 512 for tags
         error = "Messages limited to 512 bytes including CR/LF"
         raise MessageTooLong(error)

@@ -3,7 +3,7 @@ from bot.AbstractClient import AbstractClient
 import bot.ChatUser as ChatUser
 
 from .protocol import IrcProtocol
-from . import message as IrcMessage
+from . import commands as commands
 
 
 class IrcClient(AbstractClient):
@@ -14,27 +14,27 @@ class IrcClient(AbstractClient):
         self.protocol.register_event_listener(self)
 
     def join_channel(self, channel_name, password=""):
-        command = IrcMessage.Join(channel_name, password)
+        command = commands.Join(channel_name, password)
         self.protocol.send(command)
 
     def public_message(self, target, message):
-        command = IrcMessage.Privmsg(target, message)
+        command = commands.Privmsg(target, message)
         self.protocol.send(command)
 
     def private_message(self, target, message):
-        command = IrcMessage.Privmsg(target, message)
+        command = commands.Privmsg(target, message)
         self.protocol.send(command)
 
     def list_users_on_channel(self, channel):
-        command = IrcMessage.Names([channel])
+        command = commands.Names([channel])
         self.protocol.send(command)
 
     def set_nickname(self, nickname):
-        command = IrcMessage.Nick(nickname)
+        command = commands.Nick(nickname)
         self.protocol.send(command)
 
     def log_on(self, password):
-        command = IrcMessage.Pass(password)
+        command = commands.Pass(password)
         self.protocol.send(command)
 
     def on_welcome(self, event):
@@ -52,7 +52,7 @@ class IrcClient(AbstractClient):
             self.log_on(password)
 
         self.set_nickname(self.irc_user.get("nickname"))
-        command = IrcMessage.User(self.irc_user.get("username"), self.irc_user.get("ircname"))
+        command = commands.User(self.irc_user.get("username"), self.irc_user.get("ircname"))
         self.protocol.send(command)
 
     def on_nicknameinuse(self, event):
@@ -62,14 +62,11 @@ class IrcClient(AbstractClient):
         self.protocol.features.load(event.arguments)
 
     def on_ping(self, event):
-        command = IrcMessage.Pong(event.arguments[0])
+        command = commands.Pong(event.arguments[0])
         self.protocol.send(command)
 
     def on_namreply(self, event):
         print(event)
-
-    def on_topic(self, event):
-        print("ON TOPIC: ", event.channel, event.topic)
 
 
 if __name__ == '__main__':

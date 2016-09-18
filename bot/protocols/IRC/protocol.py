@@ -45,6 +45,7 @@ class IrcProtocol(ChatProtocol):
             setattr(event, "name", event.command.lower())
             self.notify_listeners(event)
 
+    # TODO: irclib-stuff, refactor and move away
     def _handle_message(self, arguments, command, source, tags):
         target, msg = arguments[:2]
         messages = ctcp.dequote(msg)
@@ -72,7 +73,7 @@ class IrcProtocol(ChatProtocol):
                 print("command: {}, source: {}, target: {}, "
                           "arguments: {}, tags: {}".format(command, source, target, [m], tags))
 
-
+    # TODO: irclib-stuff, refactor and move away
     def _handle_other(self, arguments, command, source, tags):
         target = None
         if command == "quit":
@@ -88,14 +89,8 @@ class IrcProtocol(ChatProtocol):
         print("command: {}, source: {}, target: {}, "
                   "arguments: {}, tags: {}".format(command, source, target, arguments, tags))
 
-    def is_connected(self):
-        return self.connected
-
-    def disconnect(self, msg=""):
-        if not self.connected:
-            return
-
-        self.connected = False
+    def disconnect(self):
+        pass
 
     def connection_lost(self, exc):
         print("Connection lost")
