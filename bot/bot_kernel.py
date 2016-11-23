@@ -1,14 +1,31 @@
-# -*- coding: utf-8 -*-
-# @Author: teemu
-# @Date:   2016-05-22 16:59:20
-# @Last Modified by:   teemu
-# @Last Modified time: 2016-05-22 17:19:05
+import bot.protocols.IRC.client as irc
+import bot.protocols.mumble.client as mumble
+import asyncio
+from bot.plugins.food import plugin as food
 
-
-# TODO: add logic to be able to reload everything at runtime
 
 def main():
     # load configurations
     # load connections
     # connect to them
-    pass
+
+    #irc_conn = irc.IrcClient("JanisBot4")
+    #irc_coro = loop.create_connection(lambda: irc_conn.protocol, "open.ircnet.net", 6667)
+
+    mumble_client = mumble.MumbleClient("Janisbot4", "mumina1")
+    foodplugin = food.FoodPlugin()
+    mumble_client.register_event_listener(foodplugin)
+
+    mumble_client.start("terisikk.dy.fi", 64738)
+    
+
+    #loop.run_until_complete(irc_coro)
+
+    mumble_client.join_channel("Paskaneekeri")
+
+    loop.run_forever()
+
+loop = asyncio.get_event_loop()
+
+if __name__ == "__main__":
+    main()

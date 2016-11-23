@@ -33,7 +33,7 @@ class IrcClient(AbstractClient):
         command = commands.Nick(nickname)
         self.protocol.send(command)
 
-    def log_on(self, password):
+    def authenticate(self, username=None, password=None):
         command = commands.Pass(password)
         self.protocol.send(command)
 
@@ -49,7 +49,7 @@ class IrcClient(AbstractClient):
     def on_connection_made(self, event):
         password = self.irc_user.get("password", None)
         if password:
-            self.log_on(password)
+            self.authenticate(password=password)
 
         self.set_nickname(self.irc_user.get("nickname"))
         command = commands.User(self.irc_user.get("username"), self.irc_user.get("ircname"))

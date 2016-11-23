@@ -12,6 +12,10 @@ class AbstractClient(object):
         self.loop = None
         self.listeners = []
         self.register_event_listener(self)
+        self.client_type = None
+
+    def authenticate(self, username=None, password=None):
+        raise NotImplementedError("authenticate not implemented")
 
     def join_channel(self, name, password=""):
         raise NotImplementedError("join_channel not implemented")
@@ -29,7 +33,7 @@ class AbstractClient(object):
         if listener not in self.listeners:
             self.listeners.append(listener)
 
-    def on_protocol_event(self, event):
+    def publish_event(self, event):
         for listener in self.listeners:
             handler = getattr(listener, "on_" + event.name, None)
             if handler:

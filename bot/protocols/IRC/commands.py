@@ -275,57 +275,11 @@ def from_server_message(line):
     source = NickMask.from_group(match.group("prefix"))
     command = parser.command_from_string(match.group("command"))
     arguments = parser.arguments_from_string(match.group('argument'))
-    
-    if match.group("tags"):
-        tags = parser.tags_from_string(match.group('tags'))
     tags = None
 
-    #Cls = COMMANDS.get(command.lower())
-    msg = None
+    if match.group("tags"):
+        tags = parser.tags_from_string(match.group('tags'))
 
-    #if Cls:
-    #    msg = Cls(*arguments)
-    #    msg.source = source
-    #    msg.tags = tags
-    #else:
     msg = IrcMessage(command, arguments, tags, source=source) 
 
     return msg
-
-
-COMMANDS = {
-    "admin"     : Admin,
-    "away"      : Away,
-    "info"      : Info,
-    "invite"    : Invite,
-    "ison"      : Ison,
-    "join"      : Join,
-    "kick"      : Kick,
-    "links"     : Links,
-    "list"      : List,
-    "lusers"    : Lusers,
-    "mode"      : Mode,
-    "motd"      : Motd,
-    "names"     : Names,
-    "nick"      : Nick,
-    "notice"    : Notice,
-    "oper"      : Oper,
-    "part"      : Part,
-    "pass"      : Pass,
-    "ping"      : Ping,
-    "pong"      : Pong,
-    "privmsg"   : Privmsg,
-    "quit"      : Quit,
-    "stats"     : Stats,
-    "time"      : Time,
-    "topic"     : Topic,
-    "trace"     : Trace,
-    "user"      : User,
-    "userhost"  : Userhost,
-    "users"     : Users,
-    "version"   : Version,
-    "wallops"   : Wallops,
-    "who"       : Who,
-    "whois"     : Whois,
-    "whowas"    : Whowas,
-}

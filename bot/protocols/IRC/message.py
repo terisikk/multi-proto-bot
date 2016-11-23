@@ -9,10 +9,13 @@ class IrcMessage(object):
         self.sentence = sentence
 
     def to_outgoing_message(self):
-        msg = ""
-        msg += self._add_tags()
-        msg += self.command
-        msg += self._add_arguments()
+        msg_data = [
+            self._add_tags(),
+            self.command,
+            self._add_arguments()
+        ]
+
+        msg = "".join(msg_data)
         return msg
 
     def _add_tags(self):

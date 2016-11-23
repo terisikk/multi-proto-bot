@@ -78,8 +78,6 @@ class MumbleParser(object):
             except struct.error:
                 break
 
-            print(packet.number)
-
             offset = self._get_message_offset(packet.length)
 
             if not self._enough_data_to_parse(offset):
@@ -114,7 +112,7 @@ class MumbleParser(object):
         else:
             parsed = message_class()
             parsed.ParseFromString(packet.data)
-        return parsed
+        return parsed, message_class.__name__
 
     def _parse_voicedata(self, data):
         pass

@@ -15,18 +15,12 @@ class IrcProtocol(ChatProtocol):
         self.connected = False
         self.real_server_name = ""
         self.features = features.FeatureSet()
-        self.transport = None
         self.buffer = buffer.LenientDecodingLineBuffer()
 
     def connection_made(self, transport):
         self.connected = True
-
-        self.transport = transport
-
-        for listener in self.listeners:
-            listener.on_connection_made(None)
-
-        return self
+        super(IrcProtocol, self).connection_made(transport)
+        return
 
     def reconnect(self):
         pass
