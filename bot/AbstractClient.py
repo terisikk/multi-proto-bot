@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import asyncio
-
+import bot.generics as generics
 
 class AbstractClient(object):
     def __init__(self):
@@ -13,6 +13,7 @@ class AbstractClient(object):
         self.listeners = []
         self.register_event_listener(self)
         self.client_type = None
+        self.eventmappers = {}
 
     def authenticate(self, username=None, password=None):
         raise NotImplementedError("authenticate not implemented")
@@ -33,11 +34,21 @@ class AbstractClient(object):
         if listener not in self.listeners:
             self.listeners.append(listener)
 
-    def publish_event(self, event):
+    def publish_event(self, name, event):
         for listener in self.listeners:
-            handler = getattr(listener, "on_" + event.name, None)
+
+            generic_event = self.event_to_generic(event, name)
+
+            handler = getattr(listener, "on_" + name, None)
             if handler:
-                handler(event)
+                handler(generic_event)
+
+    def event_to_generic(self, event, name):
+        mapper = self.eventmappers.get(name, None)
+        if mapper:
+            return mapper(event)
+        return generics.GenericEvent(self.client_type, event)
+
 
     def start(self, server, port):
         self.loop = asyncio.get_event_loop()

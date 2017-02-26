@@ -6,6 +6,7 @@ class GenericEvent(object):
         self.name = self.__class__.__name__.lower()
         self.timestamp = time.time()
         self.client = client
+        self.original_event = original
 
 class PublicMessage(GenericEvent):
     def __init__(self, client, original, text, user, channel=None):

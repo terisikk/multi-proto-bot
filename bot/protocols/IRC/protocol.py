@@ -36,8 +36,7 @@ class IrcProtocol(ChatProtocol):
         for line in self.buffer:
             event = packethandler.unpack_data(line)
             print(event.command, event.source, event.arguments)
-            setattr(event, "name", event.command.lower())
-            self.notify_listeners(event)
+            self.notify_listeners(event.command.lower(), event)
 
     # TODO: irclib-stuff, refactor and move away
     def _handle_message(self, arguments, command, source, tags):

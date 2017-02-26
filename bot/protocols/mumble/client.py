@@ -52,7 +52,7 @@ class MumbleClient(AbstractClient):
         self.loop.call_later(PING_INTERVAL, self.ping)
 
     def on_textmessage(self, message):
-        print(message)
+        print("CLIENT: ", message)
 
     def send_textmessage(self, text, channels=None, users=None):
         """Send chat message to a list of channels or users by ids"""

@@ -23,11 +23,11 @@ class ChatProtocol(asyncio.Protocol):
         if listener not in self.listeners:
             self.listeners.append(listener)
 
-    def notify_listeners(self, event):
+    def notify_listeners(self, name, event):
         for listener in self.listeners:
             handler = getattr(listener, "publish_event", None)
             if handler:
-                handler(event)
+                handler(name, event)
 
     def _check_transport_status(self):
         if self.transport is None:

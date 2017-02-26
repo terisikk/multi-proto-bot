@@ -9,8 +9,6 @@ from .parser import MumbleParser, PACKET_NUMBERS
 
 LOGGING = True
 
-MumbleMessage = namedtuple("MumbleMessage", ["name", "message"])
-
 
 class UDPTunnelTransport(asyncio.DatagramTransport):
     def __init__(self, control_protocol):
@@ -38,8 +36,7 @@ class MumbleProtocol(ChatProtocol):
         message, name = self.parser.process_buffer(data)
 
         if message:
-            m = MumbleMessage(name.lower(), message)
-            self.notify_listeners(m)
+            self.notify_listeners(name.lower(), message)
 
     def send(self, protobuf_message):
         packet = self.parser.pack_data(protobuf_message)
