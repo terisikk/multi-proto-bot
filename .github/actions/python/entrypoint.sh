@@ -2,6 +2,6 @@
 
 set -e
 
-cd /github/workflow
+cd /github/workspace
 
 sh -c "$*"
