@@ -29,4 +29,4 @@ class FoodPlugin(object):
         print("GENERIC: ", message.timestamp)
 
     def get_food(self):
-        return "Ass burgers :D"
+        return "Hauki on kala :D"
