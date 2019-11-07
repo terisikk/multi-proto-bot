@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# flake8: noqa
+# TODO: REMOVE NOQA AFTER THIS FILE HAS BEEN REFACTORED
 
 from irc.client import ctcp, features, is_channel
 from jaraco.stream import buffer
@@ -29,7 +31,7 @@ class IrcProtocol(ChatProtocol):
         return self.real_server_name or ""
 
     def data_received(self, data):
-        #print("FROM SERVER: {}".format(data))
+        # print("FROM SERVER: {}".format(data))
 
         self.buffer.feed(data)
 
@@ -93,5 +95,6 @@ class IrcProtocol(ChatProtocol):
         print("TO SERVER: ", command.command, command.arguments, command.tags, command.sentence)
         message = packethandler.pack_data(command)
         self.send_raw(message)
+
 
 loop = asyncio.get_event_loop()

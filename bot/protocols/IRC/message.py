@@ -1,10 +1,11 @@
 from . import parser
 
+
 class IrcMessage(object):
     def __init__(self, command, arguments=None, tags=None, sentence=None, source=None):
         self.source = source
         self.command = command
-        self.arguments = arguments 
+        self.arguments = arguments
         self.tags = tags
         self.sentence = sentence
 
@@ -28,6 +29,3 @@ class IrcMessage(object):
             string += " "
         string += parser.arguments_to_string(self.arguments, self.sentence)
         return string
-
-
-

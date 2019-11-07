@@ -42,7 +42,7 @@ class IrcClient(AbstractClient):
         self.join_channel("#smurkkanat")
 
     def on_nick(self, event):
-        #if event.source.nick == self.irc_user.real_nickname:
+        # if event.source.nick == self.irc_user.real_nickname:
         #    self.irc_user.real_nickname = event.arguments[0]
         pass
 
@@ -52,7 +52,11 @@ class IrcClient(AbstractClient):
             self.authenticate(password=password)
 
         self.set_nickname(self.irc_user.get("nickname"))
-        command = commands.User(self.irc_user.get("username"), self.irc_user.get("ircname"))
+
+        username = self.irc_user.get("username")
+        ircname = self.irc_user.get("ircname")
+
+        command = commands.User(username, ircname)
         self.protocol.send(command)
 
     def on_nicknameinuse(self, event):
@@ -72,7 +76,11 @@ class IrcClient(AbstractClient):
 if __name__ == '__main__':
     connection = IrcClient("JanisBot4")
     loop = asyncio.get_event_loop()
-    coro = loop.create_connection(lambda: connection.protocol, "open.ircnet.net", 6667)
+
+    server = "open.ircnet.net"
+    port = 6667
+
+    coro = loop.create_connection(lambda: connection.protocol, server, port)
     loop.run_until_complete(coro)
     loop.run_forever()
     loop.close()

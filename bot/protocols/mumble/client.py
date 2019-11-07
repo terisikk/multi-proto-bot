@@ -5,8 +5,6 @@ import bot.protocols.mumble.Mumble_pb2 as mumble_protobuf
 from bot.AbstractClient import AbstractClient
 from .protocol import MumbleProtocol
 
-import bot.generics as generics
-
 MUMBLE_VERSION = 66052  # 1.2.4
 PING_INTERVAL = 20
 
@@ -81,4 +79,3 @@ class MumbleClient(AbstractClient):
 
         coroutine = self.loop.create_connection(lambda: self.protocol, server, port, ssl=ssl_ctxt)
         self.loop.run_until_complete(coroutine)
-

@@ -1,5 +1,5 @@
-from collections import namedtuple
 import time
+
 
 class GenericEvent(object):
     def __init__(self, client, original):
@@ -7,6 +7,7 @@ class GenericEvent(object):
         self.timestamp = time.time()
         self.client = client
         self.original_event = original
+
 
 class PublicMessage(GenericEvent):
     def __init__(self, client, original, text, user, channel=None):

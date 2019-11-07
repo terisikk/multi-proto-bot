@@ -9,15 +9,18 @@ class Admin(IrcMessage):
         super().__init__("ADMIN", [server])
         self.server = server
 
+
 class Away(IrcMessage):
     def __init__(self, text=""):
         super().__init__("AWAY", sentence=text)
         self.text = text
 
+
 class Info(IrcMessage):
     def __init__(self, server):
         super().__init__("INFO", [server])
         self.server = server
+
 
 class Invite(IrcMessage):
     def __init__(self, nick, channel):
@@ -25,10 +28,12 @@ class Invite(IrcMessage):
         self.nick = nick
         self.channel = channel
 
+
 class Ison(IrcMessage):
     def __init__(self, nicks):
         super().__init__("ISON", nicks)
         self.nicks = nicks
+
 
 class Join(IrcMessage):
     def __init__(self, channels, keys=None):
@@ -40,6 +45,7 @@ class Join(IrcMessage):
         self.keys = always_iterable(keys)
         self.arguments.append(",".join(self.keys))
 
+
 class Kick(IrcMessage):
     def __init__(self, channel, nick, comment=None):
         super().__init__("KICK", [channel, nick], sentence=comment)
@@ -47,11 +53,13 @@ class Kick(IrcMessage):
         self.nick = nick
         self.comment = comment
 
+
 class Links(IrcMessage):
     def __init__(self, remote_server="", server_mask=""):
         super().__init__("LINKS", [remote_server, server_mask])
         self.remote_server = remote_server
         self.server_mask = server_mask
+
 
 class List(IrcMessage):
     def __init__(self, channels=None, server=""):
@@ -62,10 +70,12 @@ class List(IrcMessage):
         channel_string = ",".join(self.channels)
         self.arguments = [channel_string, server]
 
+
 class Lusers(IrcMessage):
     def __init__(self, server=""):
         super().__init__("LUSERS", [server])
         self.server = server
+
 
 class Mode(IrcMessage):
     def __init__(self, target, flags):
@@ -73,10 +83,12 @@ class Mode(IrcMessage):
         self.target = target
         self.flags = flags
 
+
 class Motd(IrcMessage):
     def __init__(self, server=""):
         super().__init__("MOTD", [server])
         self.server = server
+
 
 class Names(IrcMessage):
     def __init__(self, channels=None):
@@ -84,10 +96,12 @@ class Names(IrcMessage):
         channel_string = ','.join(self.channels)
         super().__init__("NAMES", [channel_string])
 
+
 class Nick(IrcMessage):
     def __init__(self, nick):
         super().__init__("NICK", [nick])
         self.nick = nick
+
 
 class Notice(IrcMessage):
     def __init__(self, target, text):
@@ -95,22 +109,26 @@ class Notice(IrcMessage):
         self.target = target
         self.text = text
 
+
 class Oper(IrcMessage):
     def __init__(self, nick, password):
         super().__init__("OPER", [nick, password])
         self.nick = nick
         self.password = password
 
+
 class Part(IrcMessage):
     def __init__(self, channels, reason=""):
         self.channels = always_iterable(channels)
         channel_string = ",".join(self.channels)
-        super().__init__("PART", [channel_string, reason])    
+        super().__init__("PART", [channel_string, reason])
+
 
 class Pass(IrcMessage):
     def __init__(self, password):
         super().__init__("PASS", [password])
         self.password = password
+
 
 class Ping(IrcMessage):
     def __init__(self, target, target2=""):
@@ -118,17 +136,20 @@ class Ping(IrcMessage):
         self.target = target
         self.target2 = target2
 
+
 class Pong(IrcMessage):
     def __init__(self, target, target2=""):
         super().__init__("PONG", [target, target2])
         self.target = target
         self.target2 = target2
 
+
 class Privmsg(IrcMessage):
     def __init__(self, target, text):
         super().__init__("PRIVMSG", [target], sentence=text)
         self.target = target
         self.text = text
+
 
 class Quit(IrcMessage):
     def __init__(self, reason=None):
@@ -137,16 +158,19 @@ class Quit(IrcMessage):
         super().__init__("QUIT", sentence=reason)
         self.reason = reason
 
+
 class Stats(IrcMessage):
     def __init__(self, statstype, server=""):
         super().__init__("STATS ", [statstype, server])
         self.statstype = statstype
         self.server = server
 
+
 class Time(IrcMessage):
     def __init__(self, server=""):
         super().__init__("TIME", [server])
         self.server = server
+
 
 class Topic(IrcMessage):
     def __init__(self, channel, topic=None):
@@ -154,10 +178,12 @@ class Topic(IrcMessage):
         self.channel = channel
         self.topic = topic
 
+
 class Trace(IrcMessage):
     def __init__(self, target=""):
         super().__init__("TRACE", [target])
         self.target = target
+
 
 class User(IrcMessage):
     def __init__(self, username, realname):
@@ -165,26 +191,31 @@ class User(IrcMessage):
         self.username = username
         self.realname = realname
 
+
 class Userhost(IrcMessage):
     def __init__(self, nicks):
         self.nicks = always_iterable(nicks)
         super().__init__("USERHOST", [",".join(self.nicks)])
         self.nicks = self.nicks
 
+
 class Users(IrcMessage):
     def __init__(self, server=""):
         super().__init__("USERS", [server])
         self.server = server
+
 
 class Version(IrcMessage):
     def __init__(self, server=""):
         super().__init__("VERSION", [server])
         self.server = server
 
+
 class Wallops(IrcMessage):
     def __init__(self, text):
         super().__init__("WALLOPS", sentence=text)
         self.text = text
+
 
 class Who(IrcMessage):
     def __init__(self, target="", op=False):
@@ -195,10 +226,12 @@ class Who(IrcMessage):
         self.target = target
         self.op = op
 
+
 class Whois(IrcMessage):
     def __init__(self, targets):
         self.targets = always_iterable(targets)
         super().__init__("WHOIS", ",".join(self.targets))
+
 
 class Whowas(IrcMessage):
     def __init__(self, nicks, maximum="", server=""):
@@ -207,18 +240,22 @@ class Whowas(IrcMessage):
         self.maximum = maximum
         self.server = server
 
+
 class Ctcp(IrcMessage):
     def __init__(self, ctcptype, target, parameter=""):
         self.target = target
         self.ctcptype = ctcptype.upper()
         self.parameter = parameter
 
+        self.message = "\001" + self.ctcptype
+
         if parameter:
-            self.message = "\001" + self.ctcptype + " " + self.parameter + "\001"
+            self.message = self.message + " " + self.parameter + "\001"
         else:
-            self.message = "\001" + self.ctcptype + "\001"
+            self.message = self.message + "\001"
 
         super().__init__("PRIVMSG", [self.target, self.message])
+
 
 class Ctcpreply(IrcMessage):
     def __init__(self, target, parameter):
@@ -226,9 +263,11 @@ class Ctcpreply(IrcMessage):
         self.parameter = parameter
         super().__init__("NOTICE", [target, "\001{}\001".format(parameter)])
 
+
 class Action(Ctcp):
     def __init__(self, target, action):
         super().__init__("ACTION", target, action)
+
 
 class Cap(IrcMessage):
     def __init__(self, subcommand, *args):
@@ -240,14 +279,22 @@ class Cap(IrcMessage):
             subcommand -- LS, LIST, REQ, ACK, CLEAR, END
             args -- capabilities, if required for given subcommand
         """
-        cap_subcommands = set(["LS", "LIST", "REQ", "ACK", "NAK", "CLEAR", "END"])
+        cap_subcommands = set([
+            "LS",
+            "LIST",
+            "REQ",
+            "ACK",
+            "NAK",
+            "CLEAR",
+            "END"])
+
         client_subcommands = set(cap_subcommands) - set('NAK')
         assert subcommand in client_subcommands, "invalid subcommand"
 
         super().__init__("CAP", [subcommand])
 
         self._handle_multi_parameter(args)
-        
+
     def _handle_multi_parameter(self, args):
         """
         According to the spec::
@@ -280,6 +327,6 @@ def from_server_message(line):
     if match.group("tags"):
         tags = parser.tags_from_string(match.group('tags'))
 
-    msg = IrcMessage(command, arguments, tags, source=source) 
+    msg = IrcMessage(command, arguments, tags, source=source)
 
     return msg

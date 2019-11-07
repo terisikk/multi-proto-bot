@@ -2,6 +2,7 @@
 import asyncio
 import bot.generics as generics
 
+
 class AbstractClient(object):
     def __init__(self):
         self._nick = ""
@@ -48,7 +49,6 @@ class AbstractClient(object):
         if mapper:
             return mapper(event)
         return generics.GenericEvent(self.client_type, event)
-
 
     def start(self, server, port):
         self.loop = asyncio.get_event_loop()

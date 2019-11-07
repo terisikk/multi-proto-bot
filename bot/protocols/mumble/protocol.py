@@ -1,6 +1,4 @@
 import asyncio
-import ssl
-from collections import namedtuple
 
 from bot.ChatProtocol import ChatProtocol
 import bot.protocols.mumble.Mumble_pb2 as mumble_protobuf

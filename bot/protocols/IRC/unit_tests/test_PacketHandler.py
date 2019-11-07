@@ -1,6 +1,7 @@
 import unittest
 from .. import packethandler
 
+
 class TestPacketHandler(unittest.TestCase):
     def setUp(self):
         pass

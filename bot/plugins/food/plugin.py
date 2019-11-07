@@ -1,6 +1,3 @@
-import json
-import requests
-
 ACTIVATOR = "!food"
 
 
@@ -14,6 +11,7 @@ def event_filter(client_type):
 
         return wrapped_f
     return wrap
+
 
 class FoodPlugin(object):
     def __init__(self):
