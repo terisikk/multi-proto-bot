@@ -7,14 +7,10 @@ on:
 
 jobs:
   unit:
-    name: "Unit tests"
+    name: "Test for continuous delivery"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: ./.github/actions/unittest
-  static:
-    name: "Static code analysis"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: ./.github/actions/flake8
+      - uses: ./.github/actions/python
+        with:
+          command: pip install -r requirements.txt
