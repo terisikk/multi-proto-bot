@@ -1,0 +1,5 @@
+name: 'Flake 8'
+description: 'Runs flake8 analysis'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
