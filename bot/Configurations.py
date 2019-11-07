@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Author: teemu
-# @Date:   2016-06-12 11:22:49
-# @Last Modified by:   Teemu Risikko
-# @Last Modified time: 2016-06-18 09:43:51
-
 import configparser
 from bot.Singleton import Singleton
 from itertools import filterfalse

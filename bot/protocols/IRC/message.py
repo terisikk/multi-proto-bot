@@ -15,8 +15,7 @@ class IrcMessage(object):
             self._add_arguments()
         ]
 
-        msg = "".join(msg_data)
-        return msg
+        return "".join(msg_data)
 
     def _add_tags(self):
         if self.tags:

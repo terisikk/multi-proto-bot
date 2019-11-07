@@ -1,6 +1,6 @@
 import unittest
 import struct
-from bot.protocols.mumble.MumbleParser import MumbleParser, MumblePacket
+from bot.protocols.mumble.parser import MumbleParser, MumblePacket
 import bot.protocols.mumble.Mumble_pb2 as mumble_protobuf
 
 
