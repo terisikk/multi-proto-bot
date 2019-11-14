@@ -1,4 +1,4 @@
-# Janisbot
+# Multi Protocol Bot
 
 A modular bot that can connect to multiple messaging services.
 
